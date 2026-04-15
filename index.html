@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oh, The Things You Could Be Doing Instead!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:ital,wdth,wght@0,75..125,400..700;1,75..125,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sticky time display -->
+  <div class="sticky-time" id="stickyTime">
+    <div class="sticky-time-shadow"></div>
+    <div class="sticky-time-inner">
+      <span id="stickyH">0</span>
+      <span class="sticky-colon">:</span>
+      <span id="stickyM">00</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <section class="hero">
+    <img class="hero-spiral" src="images/spiral-hero.png" alt="" draggable="false">
+
+    <h2 class="hero-eyebrow">Oh, The Things You Could Be Doing</h2>
+    <h1 class="hero-title">INSTEAD!</h1>
+
+    <div class="hero-bottom">
+      <!-- Input column -->
+      <div class="input-column">
+        <div class="input-widget-wrapper">
+          <div class="input-shadow"></div>
+          <div class="input-widget">
+            <input type="number" class="time-field" id="hoursInput"
+                   min="0" placeholder="0" autocomplete="off">
+            <span class="colon-sep">:</span>
+            <input type="number" class="time-field" id="minutesInput"
+                   min="0" max="59" placeholder="00" autocomplete="off">
+            <button class="arrow-btn" id="submitBtn" aria-label="Submit">→</button>
+          </div>
+        </div>
+        <p class="zero-placeholder" id="zeroPlaceholder">enter your time to see what slipped away.</p>
+      </div>
+
+      <!-- Time breakdown (below input) -->
+      <div class="time-breakdown" id="timeBreakdown">
+        <div class="bd-row"><span class="bd-val" id="bdHours">—</span> Hours</div>
+        <div class="bd-row"><span class="bd-val" id="bdMinutes">—</span> Minutes</div>
+        <div class="bd-row"><span class="bd-val" id="bdSeconds">—</span> Seconds</div>
+        <div class="bd-row"><span class="bd-val" id="bdMs">—</span> Milliseconds</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       COMPARISON SECTIONS
+  ═══════════════════════════════════════ -->
+  <div class="comparison-sections" id="comparisonSections">
+
+    <!-- DAILY -->
+    <section class="section-block daily">
+      <img class="section-spiral" src="images/spiral-daily.png" alt="">
+      <h2 class="section-heading">In this time, you could have</h2>
+      <div class="cards-container" id="dailyCards"></div>
+    </section>
+
+    <!-- WEEKLY -->
+    <section class="section-block weekly">
+      <img class="section-spiral rotated" src="images/spiral-weekly.png" alt="">
+      <h2 class="section-heading">Now imagine this repeats every day for a <em>WEEK...</em></h2>
+      <div class="cards-container" id="weeklyCards"></div>
+    </section>
+
+    <!-- YEARLY -->
+    <section class="section-block yearly">
+      <img class="section-spiral rotated" src="images/spiral-yearly.png" alt="">
+      <h2 class="section-heading">...or for a <em>YEAR</em></h2>
+      <div class="cards-container" id="yearlyCards"></div>
+    </section>
+
+    <!-- AND FINALLY -->
+    <div class="section-finally-outer">
+      <section class="section-finally">
+        <img class="finally-spiral" src="images/spiral-closer.png" alt="">
+        <h2 class="finally-heading">And FINALLY,</h2>
+        <div class="finally-badge-row">
+          <div class="finally-badge">
+            <span class="finally-num" id="finalDays">4</span><span class="finally-unit"> days</span>
+          </div>
+        </div>
+        <h3 class="finally-sub">doing something you love</h3>
+      </section>
+    </div>
+
+    <!-- CLOSER -->
+    <section class="section-closer">
+      <p class="closer-t1">it's not too late..</p>
+      <p class="closer-t2">you can still</p>
+      <div class="closer-bar">
+        <p class="closer-bar-text">FIX YOUR ATTENTION SPAN</p>
+      </div>
+      <p class="closer-today">today.</p>
+    </section>
+
+  </div><!-- /comparison-sections -->
+
+  <script>
+    // ─── DATA ───────────────────────────────────────────────────────────────
+
+    const MAX_BAR = 387;
+
+    const daily = [
+      { v:'left',  dur:15,   task:'Trash & dishes',
+        title:'Taken out the trash AND Done the dishes',
+        body:'Average time for both: 15 minutes. A complete act of domestic heroism you chose not to perform.' },
+      { v:'right', dur:75,   task:"Sabrina's set",
+        title:"Watched Sabrina Carpenter's full Coachella set",
+        body:'Runtime: 75 minutes. She was right there.' },
+      { v:'left',  dur:97,   task:'Mean Girls runtime',
+        title:'Rewatched Mean Girls (and made "so fetch" a thing)',
+        body:'Runtime: 97 minutes. You could have single-handedly changed the cultural lexicon.' },
+      { v:'right', dur:2,    task:'That one text',
+        title:'Replied to that one text',
+        body:'Average reply time: 2 minutes. You know which one. They are still waiting.' },
+      { v:'left',  dur:20,   task:'Calling mom',
+        title:'Called your mom',
+        body:'Average call: 20 minutes. She saw you being active on your socials though.' },
+      { v:'right', dur:35,   task:'Casual 5K run',
+        title:'Run a 5k',
+        body:'Avg casual 5k: 35 minutes. Your dog would have loved it.' },
+      { v:'left',  dur:90,   task:'DIY hair dye',
+        title:'Dyed your hair',
+        body:'Full DIY dye job: 90 minutes. Still the same hair.' },
+      { v:'right', dur:15,   task:'Goal planning',
+        title:"Rewritten your New Year's goals",
+        body:"15 minutes per planning session. Fresh start, same results." },
+      { v:'left',  dur:20,   task:'Dog walk',
+        title:'Walked your dog',
+        body:'Average walk: 20 minutes. Your dog noticed.' },
+      { v:'right', dur:47,   task:'Baking cookies',
+        title:'Baked chocolate chip cookies from scratch',
+        body:"Prep + bake = 47 minutes. Your kitchen is still clean." },
+      { v:'left',  dur:4,    task:'LinkedIn Easy Apply',
+        title:'Applied to jobs on LinkedIn',
+        body:"Easy Apply takes ~4 minutes. That's [n] rejections you haven't received yet." },
+      { v:'right', dur:19,   task:'Netflix browsing',
+        title:'Decided what to watch on Netflix',
+        body:"Average browse time: 18–20 minutes. [n] full cycles of \"I don't know, you pick.\"" },
+    ];
+
+    const weekly = [
+      { v:'left',  dur:1800, task:'Outdoor deck build',
+        title:'Built an outdoor deck',
+        body:'DIY deck construction: ~30 hours avg. You\'ve got the foundation at least.' },
+      { v:'right', dur:720,  task:'Crochet blanket',
+        title:'Finished a beginner crochet blanket',
+        body:'Average completion time: 12 hours. You had time for one full blanket or the start of a scarf you\'d never finish anyway.' },
+      { v:'left',  dur:480,  task:'Short story draft',
+        title:'Written a short story',
+        body:'Average first draft: ~8 hours. You had time for [n].' },
+      { v:'right', dur:270,  task:'The Bear S1',
+        title:'Watched every episode of The Bear S1',
+        body:'Runtime of The Bear S1: ~4.5 hours.' },
+      { v:'left',  dur:360,  task:"Driver's license",
+        title:"Finally gotten your driver's license",
+        body:'Required hours: ~6 hours. Still no license.' },
+      { v:'right', dur:180,  task:'TikTok dance',
+        title:'Learned a TikTok dance. All the way through.',
+        body:'Estimated learning time: ~3 hours. [n] dances you could\'ve posted.' },
+    ];
+
+    const yearly = [
+      { v:'left',  dur:12000, task:'Yoga certification',
+        title:'Become a certified yoga instructor',
+        body:'Certification requirement: 200 hours. You could be certified, teaching, and already spiritually exhausted by your students.' },
+      { v:'right', dur:2400,  task:"Obama's reading list",
+        title:"Read every book on Obama's reading list",
+        body:'Estimated reading time: ~40 hours for the full list.' },
+      { v:'left',  dur:9000,  task:'Conversational Spanish',
+        title:'Learned conversational Spanish',
+        body:'FSI research: ~150 hours to conversational fluency.' },
+      { v:'right', dur:12000, task:'Camino de Santiago',
+        title:'Walked the entire Camino de Santiago',
+        body:'The full pilgrimage: ~200 hours of walking.' },
+    ];
+
+    // ─── HELPERS ────────────────────────────────────────────────────────────
+
+    function fmt(n) {
+      if (n >= 10000) return Math.round(n).toLocaleString();
+      if (n >= 100)   return Math.round(n).toString();
+      if (n >= 10)    return (Math.round(n * 10) / 10).toString();
+      return (Math.round(n * 10) / 10).toString();
+    }
+
+    function barWidths(screenMins, dur) {
+      if (screenMins === 0) return { task: 0, time: 0 };
+      const r = screenMins / dur;
+      if (r >= 1) {
+        return { task: Math.round((dur / screenMins) * MAX_BAR), time: MAX_BAR };
+      } else {
+        return { task: MAX_BAR, time: Math.round((screenMins / dur) * MAX_BAR) };
+      }
+    }
+
+    function bodyText(template, n) {
+      return template.replace(/\[n\]/g, fmt(n));
+    }
+
+    function pad2(n) { return String(n).padStart(2,'0'); }
+
+    // ─── RENDER ─────────────────────────────────────────────────────────────
+
+    function makeCard(item, count, isLeft) {
+      const badgeRot = isLeft ? 'rot-right' : 'rot-left';
+      const topClass = isLeft ? 'left' : 'right';
+      const textClass = isLeft ? '' : 'right';
+
+      const w = barWidths(/* filled later */ 0, item.dur);
+      const taskShort = item.task;
+      const screenTime = 'Your screen time';
+
+      const badgeHtml = `
+        <div class="badge-wrapper">
+          <div class="badge-box ${badgeRot}" data-badge>
+            <span class="badge-num" data-num>${fmt(count)}</span><span class="badge-unit"> times</span>
+          </div>
+        </div>`;
+
+      const textHtml = `
+        <div class="card-text-block ${textClass}">
+          <h3 class="activity-title">${item.title}</h3>
+          <p class="activity-body" data-body="${encodeURIComponent(item.body)}">${bodyText(item.body, count)}</p>
+        </div>`;
+
+      // Bar rows
+      const rowClass = isLeft ? '' : ' right';
+      const barRows = isLeft
+        ? `<div class="bar-row">
+             <span class="bar-label">${taskShort}</span>
+             <div class="bar task" data-bar="task" style="width:0px"></div>
+           </div>
+           <div class="bar-row">
+             <span class="bar-label">${screenTime}</span>
+             <div class="bar time" data-bar="time" style="width:0px"></div>
+           </div>`
+        : `<div class="bar-row right">
+             <div class="bar task" data-bar="task" style="width:0px"></div>
+             <span class="bar-label">${taskShort}</span>
+           </div>
+           <div class="bar-row right">
+             <div class="bar time" data-bar="time" style="width:0px"></div>
+             <span class="bar-label">${screenTime}</span>
+           </div>`;
+
+      return `
+        <div class="comparison-card" data-dur="${item.dur}">
+          <div class="card-top ${topClass}">
+            ${isLeft ? textHtml + badgeHtml : badgeHtml + textHtml}
+          </div>
+          <div class="bar-card">${barRows}</div>
+        </div>`;
+    }
+
+    function renderSection(containerId, items, multiplier, totalMins) {
+      const container = document.getElementById(containerId);
+      if (container.children.length > 0) return; // already rendered
+
+      let html = '';
+      items.forEach((item) => {
+        const count = (totalMins * multiplier) / item.dur;
+        html += makeCard(item, count, item.v === 'left');
+      });
+      container.innerHTML = html;
+    }
+
+    // ─── UPDATE ─────────────────────────────────────────────────────────────
+
+    function update(totalMins, hours, minutes) {
+      const active = totalMins > 0;
+
+      // Zero state
+      document.getElementById('zeroPlaceholder').style.display = active ? 'none' : 'block';
+      document.getElementById('comparisonSections').classList.toggle('visible', active);
+      document.getElementById('stickyTime').classList.toggle('visible', active);
+
+      if (!active) {
+        // Reset breakdown
+        ['bdHours','bdMinutes','bdSeconds','bdMs'].forEach(id => {
+          document.getElementById(id).textContent = '—';
+        });
+        return;
+      }
+
+      // Time breakdown
+      document.getElementById('bdHours').textContent   = hours.toLocaleString();
+      document.getElementById('bdMinutes').textContent  = totalMins.toLocaleString();
+      document.getElementById('bdSeconds').textContent  = (totalMins * 60).toLocaleString();
+      document.getElementById('bdMs').textContent       = (totalMins * 60 * 1000).toLocaleString();
+
+      // Sticky display
+      document.getElementById('stickyH').textContent = hours;
+      document.getElementById('stickyM').textContent = pad2(minutes % 60);
+
+      // Ensure cards are rendered
+      renderSection('dailyCards',  daily,  1,   totalMins);
+      renderSection('weeklyCards', weekly, 7,   totalMins);
+      renderSection('yearlyCards', yearly, 365, totalMins);
+
+      // Update daily cards
+      updateCards('dailyCards',  daily,  1,   totalMins);
+      updateCards('weeklyCards', weekly, 7,   totalMins);
+      updateCards('yearlyCards', yearly, 365, totalMins);
+
+      // Finally badge: days of screen time per month
+      const days = Math.max(1, Math.round((totalMins * 30) / (60 * 24)));
+      document.getElementById('finalDays').textContent = days;
+    }
+
+    function updateCards(containerId, items, multiplier, totalMins) {
+      const cards = document.getElementById(containerId).querySelectorAll('.comparison-card');
+      cards.forEach((card, i) => {
+        const item = items[i];
+        if (!item) return;
+        const count = (totalMins * multiplier) / item.dur;
+        const fmtCount = fmt(count);
+
+        // Badge number
+        const numEl = card.querySelector('[data-num]');
+        if (numEl) numEl.textContent = fmtCount;
+
+        // Body text [n] replacement
+        const bodyEl = card.querySelector('[data-body]');
+        if (bodyEl) {
+          const template = decodeURIComponent(bodyEl.getAttribute('data-body'));
+          bodyEl.textContent = bodyText(template, count);
+        }
+
+        // Bar widths
+        const bw = barWidths(totalMins * multiplier, item.dur);
+        const taskBar = card.querySelector('[data-bar="task"]');
+        const timeBar = card.querySelector('[data-bar="time"]');
+        if (taskBar) taskBar.style.width = bw.task + 'px';
+        if (timeBar) timeBar.style.width = bw.time + 'px';
+      });
+    }
+
+    // ─── EVENT LISTENERS ────────────────────────────────────────────────────
+
+    let currentTotal = 0;
+
+    function readAndUpdate() {
+      const h = Math.max(0, parseInt(document.getElementById('hoursInput').value)   || 0);
+      const m = Math.max(0, Math.min(59, parseInt(document.getElementById('minutesInput').value) || 0));
+      const total = h * 60 + m;
+      currentTotal = total;
+      update(total, h, m);
+    }
+
+    document.getElementById('hoursInput').addEventListener('input', readAndUpdate);
+    document.getElementById('minutesInput').addEventListener('input', readAndUpdate);
+    document.getElementById('submitBtn').addEventListener('click', readAndUpdate);
+    document.getElementById('stickyTime').addEventListener('click', () => {
+      document.getElementById('hoursInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => document.getElementById('hoursInput').focus(), 400);
+    });
+
+    document.getElementById('hoursInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') readAndUpdate();
+    });
+    document.getElementById('minutesInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') readAndUpdate();
+    });
+
+    // Init
+    update(0, 0, 0);
+  </script>
+</body>
+</html>
