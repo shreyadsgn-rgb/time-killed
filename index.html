@@ -288,6 +288,7 @@
       document.getElementById('zeroPlaceholder').style.display = active ? 'none' : 'block';
       document.getElementById('comparisonSections').classList.toggle('visible', active);
       document.getElementById('stickyTime').classList.toggle('visible', active);
+      document.getElementById('submitBtn').classList.toggle('pointing-down', active);
 
       if (!active) {
         // Reset breakdown
@@ -364,7 +365,12 @@
 
     document.getElementById('hoursInput').addEventListener('input', readAndUpdate);
     document.getElementById('minutesInput').addEventListener('input', readAndUpdate);
-    document.getElementById('submitBtn').addEventListener('click', readAndUpdate);
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      readAndUpdate();
+      if (currentTotal > 0) {
+        document.querySelector('.section-block.daily').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
     document.getElementById('stickyTime').addEventListener('click', () => {
       document.getElementById('hoursInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
       setTimeout(() => document.getElementById('hoursInput').focus(), 400);

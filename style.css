@@ -223,9 +223,10 @@ body::before {
   cursor: pointer;
   font-family: serif;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.5s ease;
 }
 .arrow-btn:hover { background: var(--input-bg); }
+.arrow-btn.pointing-down { transform: rotate(-270deg); }
 
 /* Zero state */
 .zero-placeholder {
