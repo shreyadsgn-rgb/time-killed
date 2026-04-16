@@ -381,6 +381,7 @@ body::before {
   backdrop-filter: blur(2px);
   width: 654px;
   padding: 24px 0;
+  overflow: hidden; /* bars must never escape the card */
 }
 
 .bar-row {
@@ -584,4 +585,129 @@ body::before {
   .closer-bar-text { font-size: 48px; }
   .input-widget { padding: 14px 20px; }
   .time-field { width: 120px; font-size: 36px; }
+}
+
+/* ─── MOBILE ─── */
+@media (max-width: 540px) {
+  /* Hero */
+  .hero {
+    padding: 48px 24px 64px;
+    min-height: auto;
+  }
+  .hero-spiral {
+    width: 180px;
+    height: 180px;
+    top: auto;
+    bottom: -20px;
+    opacity: 0.3;
+  }
+  .hero-eyebrow { font-size: 22px; }
+  .hero-title { font-size: 58px; letter-spacing: 1.2px; }
+  .hero-bottom { margin-top: 32px; gap: 20px; }
+
+  /* Input widget */
+  .input-widget { padding: 12px 16px; gap: 10px; }
+  .time-field { width: 76px; font-size: 30px; }
+  .colon-sep { font-size: 30px; }
+  .arrow-btn { width: 48px; height: 48px; font-size: 22px; }
+  .zero-placeholder { font-size: 16px; }
+  .bd-row { font-size: 16px; }
+
+  /* Sticky time */
+  .sticky-time { top: 14px; right: 14px; }
+  .sticky-time-inner { padding: 8px 12px; gap: 6px; }
+  .sticky-time-inner span, .sticky-colon { font-size: 20px; }
+
+  /* Section blocks */
+  .section-block { padding: 48px 24px 64px; }
+  .section-heading {
+    font-size: 30px;
+    line-height: 36px;
+    letter-spacing: -0.3px;
+    margin-bottom: 40px;
+  }
+  .section-spiral { display: none; }
+  .cards-container { gap: 56px; }
+
+  /* Cards — stack vertically */
+  .comparison-card { width: 100%; }
+  .card-top {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .card-top.left  { flex-direction: column-reverse; }
+  .card-top.right { flex-direction: column; }
+  .card-text-block { width: 100%; }
+  .card-top.left  .badge-wrapper { width: 100%; justify-content: flex-start; padding: 0; }
+  .card-top.right .badge-wrapper { width: 100%; justify-content: flex-end;  padding: 0; }
+  .badge-box.rot-right { transform: rotate(3deg); }   /* left-side badges tilt right */
+  .badge-box.rot-left  { transform: rotate(-3deg); }  /* right-side badges tilt left */
+  .activity-title { font-size: 22px; line-height: 28px; }
+  .activity-body { font-size: 14px; }
+  .badge-num { font-size: 48px; }
+  .badge-unit { font-size: 28px; }
+
+  /* Bar card */
+  .bar-card { width: 100%; }
+  .bar-label { width: 90px; font-size: 12px; }
+
+  /* Finally */
+  .section-finally { padding: 60px 24px 80px; transform: rotate(1deg); }
+  .finally-heading {
+    font-size: 52px;
+    line-height: 56px;
+    letter-spacing: -1px;
+    margin-bottom: 48px;
+    padding-top: 16px;
+  }
+  .finally-badge { width: auto; min-width: 220px; }
+  .finally-num { font-size: 64px; }
+  .finally-unit { font-size: 40px; }
+  .finally-sub { font-size: 40px; }
+  .finally-spiral { display: none; }
+
+  /* Closer — switch absolute-positioned elements to flow layout */
+  .section-closer {
+    height: auto;
+    padding: 72px 24px 80px;
+    display: flex;
+    flex-direction: column;
+  }
+  .closer-t1 {
+    position: relative;
+    left: auto;
+    top: auto;
+    font-size: 30px;
+    white-space: normal;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .closer-t2 {
+    position: relative;
+    right: auto;
+    top: auto;
+    font-size: 30px;
+    white-space: normal;
+    margin-bottom: 24px;
+    text-align: right;
+  }
+  .closer-bar {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+  .closer-bar-text { font-size: 26px; letter-spacing: -0.5px; }
+  .closer-today {
+    position: relative;
+    right: auto;
+    top: auto;
+    font-size: 30px;
+    white-space: normal;
+    text-align: right;
+  }
 }
