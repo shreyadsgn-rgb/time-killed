@@ -161,9 +161,9 @@
     ];
 
     const weekly = [
-      { v:'left',  dur:1800, task:'Outdoor deck build',
-        title:'Built an outdoor deck',
-        body:'DIY deck construction: ~30 hours avg. You\'ve got the foundation at least.' },
+      { v:'left',  dur:300, task:'Picking a Lock',
+        title:'Learned to pick a lock',
+        body:'Average time: ~5 hours. No questions asked.' },
       { v:'right', dur:720,  task:'Crochet blanket',
         title:'Finished a beginner crochet blanket',
         body:'Average completion time: 12 hours. You had time for one full blanket or the start of a scarf you\'d never finish anyway.' },
@@ -173,9 +173,9 @@
       { v:'right', dur:270,  task:'The Bear S1',
         title:'Watched every episode of The Bear S1',
         body:'Runtime of The Bear S1: ~4.5 hours.' },
-      { v:'left',  dur:360,  task:"Driver's license",
-        title:"Finally gotten your driver's license",
-        body:'Required hours: ~6 hours. Still no license.' },
+      { v:'left',  dur:360,  task:"Homemade Pasta",
+        title:"Learned to make fresh pasta from scratch",
+        body:'Required hours: ~6 hours. No guarantees on the outcome though.' },
       { v:'right', dur:180,  task:'TikTok dance',
         title:'Learned a TikTok dance. All the way through.',
         body:'Estimated learning time: ~3 hours. [n] dances you could\'ve posted.' },
@@ -527,6 +527,77 @@
 
     // Init
     update(0, 0, 0);
+
+    // ─── BACKGROUND COLOR SCROLL TRANSITION ─────────────────────────────────
+
+    const SECTION_COLORS = [
+      { r: 255, g: 255, b: 255 },  // white   — daily
+      { r: 235, g: 255, b: 194 },  // #ebffc2 — weekly
+      { r: 211, g: 255, b: 124 },  // #d3ff7c — yearly
+      { r: 64,  g: 67,  b: 57  },  // #404339 — And FINALLY
+      { r: 255, g: 255, b: 255 },  // white   — closing
+    ];
+
+    const bgSections = [
+      document.querySelector('.section-block.daily'),
+      document.querySelector('.section-block.weekly'),
+      document.querySelector('.section-block.yearly'),
+      document.querySelector('.section-finally-outer'),
+      document.querySelector('.section-closer'),
+    ];
+
+    function lerp(a, b, t) {
+      return Math.round(a + (b - a) * t);
+    }
+
+    function lerpColor(colorA, colorB, t) {
+      return {
+        r: lerp(colorA.r, colorB.r, t),
+        g: lerp(colorA.g, colorB.g, t),
+        b: lerp(colorA.b, colorB.b, t),
+      };
+    }
+
+    function updateBackgroundColor() {
+      const vh = window.innerHeight;
+      const startFrac = 0.8;
+      const endFrac   = 0.2;
+
+      // Last section whose top is at or above the 20% threshold = "current" section
+      let currentIdx = 0;
+      for (let i = 0; i < bgSections.length; i++) {
+        if (bgSections[i].getBoundingClientRect().top <= vh * endFrac) {
+          currentIdx = i;
+        }
+      }
+
+      let color = SECTION_COLORS[currentIdx];
+
+      // Blend toward the next section if it's inside the 80%→20% transition window
+      const nextIdx = currentIdx + 1;
+      if (nextIdx < bgSections.length) {
+        const nextTop = bgSections[nextIdx].getBoundingClientRect().top;
+        if (nextTop < vh * startFrac) {
+          const t = (vh * startFrac - nextTop) / (vh * (startFrac - endFrac));
+          color = lerpColor(SECTION_COLORS[currentIdx], SECTION_COLORS[nextIdx], Math.max(0, Math.min(1, t)));
+        }
+      }
+
+      document.body.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateBackgroundColor();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    updateBackgroundColor();
   </script>
 </body>
 </html>

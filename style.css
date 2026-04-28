@@ -81,7 +81,6 @@ body::before {
 /* ─── HERO ─── */
 .hero {
   position: relative;
-  background: var(--white);
   min-height: 873px;
   display: flex;
   flex-direction: column;
@@ -298,9 +297,6 @@ body.hero-loaded .input-widget-wrapper {
   padding: 64px 64px 80px;
   overflow: hidden;
 }
-.section-block.daily  { background: var(--white); }
-.section-block.weekly { background: var(--lime-light); }
-.section-block.yearly { background: var(--lime); }
 
 .section-heading {
   font-family: 'Instrument Serif', serif;
@@ -493,12 +489,10 @@ body.hero-loaded .input-widget-wrapper {
 
 /* ─── AND FINALLY ─── */
 .section-finally-outer {
-  background: var(--olive-dark);
   overflow: hidden;
 }
 
 .section-finally {
-  background: var(--olive-dark);
   padding: 100px 64px 120px;
   position: relative;
   transform: rotate(2deg);
@@ -569,7 +563,6 @@ body.hero-loaded .input-widget-wrapper {
 
 /* ─── CLOSER ─── */
 .section-closer {
-  background: var(--white);
   height: 740px;
   position: relative;
   overflow: hidden;
