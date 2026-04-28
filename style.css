@@ -287,7 +287,7 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 96px;
+  gap: 144px;
 }
 
 /* ─── COMPARISON CARD ─── */
@@ -569,6 +569,23 @@ body::before {
   white-space: nowrap;
 }
 
+/* ─── SCROLL REVEAL ANIMATIONS ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* .closer-bar is centered via translateX(-50%), so the reveal transforms must include it */
+.closer-bar.reveal   { transform: translateX(-50%) translateY(24px); }
+.closer-bar.revealed { transform: translateX(-50%) translateY(0); }
+
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
   .hero-title { font-size: 72px; }
@@ -627,7 +644,7 @@ body::before {
     margin-bottom: 40px;
   }
   .section-spiral { display: none; }
-  .cards-container { gap: 56px; }
+  .cards-container { gap: 84px; }
 
   /* Cards — stack vertically */
   .comparison-card { width: 100%; }
@@ -710,4 +727,37 @@ body::before {
     white-space: normal;
     text-align: right;
   }
+}
+
+/* ─── NAV HINT ─── */
+.nav-hint {
+  position: fixed;
+  bottom: 32px;
+  left: 48px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  color: var(--gray-mid);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+.nav-hint.visible { opacity: 1; }
+
+.nav-key {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--gray-mid);
+  border: 1px solid var(--gray-light);
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: transparent;
+  font-style: normal;
+}
+
+@media (max-width: 768px) {
+  .nav-hint { display: none; }
 }

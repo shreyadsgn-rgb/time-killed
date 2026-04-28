@@ -109,6 +109,14 @@
 
   </div><!-- /comparison-sections -->
 
+  <!-- Navigation hint -->
+  <div class="nav-hint" id="navHint">
+    <kbd class="nav-key">tab</kbd>
+    <span>or</span>
+    <kbd class="nav-key">→</kbd>
+    jump between items
+  </div>
+
   <script>
     // ─── DATA ───────────────────────────────────────────────────────────────
 
@@ -259,7 +267,7 @@
            </div>`;
 
       return `
-        <div class="comparison-card" data-dur="${item.dur}">
+        <div class="comparison-card reveal" data-dur="${item.dur}">
           <div class="card-top ${topClass}">
             ${isLeft ? textHtml + badgeHtml : badgeHtml + textHtml}
           </div>
@@ -277,6 +285,10 @@
         html += makeCard(item, count, item.v === 'left');
       });
       container.innerHTML = html;
+      container.querySelectorAll('.comparison-card').forEach((card, i) => {
+        card.dataset.revealDelay = i * 80;
+        revealObserver.observe(card);
+      });
     }
 
     // ─── UPDATE ─────────────────────────────────────────────────────────────
@@ -288,6 +300,7 @@
       document.getElementById('zeroPlaceholder').style.display = active ? 'none' : 'block';
       document.getElementById('comparisonSections').classList.toggle('visible', active);
       document.getElementById('stickyTime').classList.toggle('visible', active);
+      if (active) showNavHintOnce();
       document.getElementById('submitBtn').classList.toggle('pointing-down', active);
 
       if (!active) {
@@ -381,6 +394,81 @@
     });
     document.getElementById('minutesInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') readAndUpdate();
+    });
+
+    // ─── SCROLL REVEAL ──────────────────────────────────────────────────────
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const delay = parseInt(entry.target.dataset.revealDelay, 10) || 0;
+        setTimeout(() => entry.target.classList.add('revealed'), delay);
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.1 });
+
+    function observeReveal(el, delay) {
+      el.classList.add('reveal');
+      el.dataset.revealDelay = delay;
+      revealObserver.observe(el);
+    }
+
+    // Static targets — observed on page load (inside display:none container, no visual impact)
+    document.querySelectorAll('.section-heading').forEach(el => observeReveal(el, 0));
+    observeReveal(document.querySelector('.finally-heading'), 0);
+    observeReveal(document.querySelector('.finally-badge-row'), 80);
+    observeReveal(document.querySelector('.finally-sub'), 160);
+    observeReveal(document.querySelector('.closer-t1'), 0);
+    observeReveal(document.querySelector('.closer-t2'), 80);
+    observeReveal(document.querySelector('.closer-bar'), 160);
+    observeReveal(document.querySelector('.closer-today'), 240);
+
+    // ─── CARD NAVIGATION ────────────────────────────────────────────────────
+
+    let currentCardIndex = -1;
+    let navHintTimer = null;
+    let navHintShownOnce = false;
+    const navHint = document.getElementById('navHint');
+
+    function getAllCards() {
+      return document.querySelectorAll('.comparison-card, .section-finally-outer, .section-closer');
+    }
+
+    function jumpToCard(index) {
+      const cards = getAllCards();
+      if (!cards.length) return;
+      currentCardIndex = ((index % cards.length) + cards.length) % cards.length;
+      cards[currentCardIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function showNavHint() {
+      navHint.classList.add('visible');
+      clearTimeout(navHintTimer);
+      navHintTimer = setTimeout(() => navHint.classList.remove('visible'), 4000);
+    }
+
+    function showNavHintOnce() {
+      if (navHintShownOnce) return;
+      navHintShownOnce = true;
+      showNavHint();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const focused = document.activeElement;
+      const inInput = focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA');
+
+      const isNext = e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey);
+      const isPrev = e.key === 'ArrowLeft'  || (e.key === 'Tab' &&  e.shiftKey);
+
+      if (!isNext && !isPrev) return;
+      if (inInput && e.key === 'Tab') return;
+
+      const cards = getAllCards();
+      if (!cards.length) return;
+
+      e.preventDefault();
+      jumpToCard(isNext ? currentCardIndex + 1 : currentCardIndex - 1);
+      showNavHint();
     });
 
     // Init
