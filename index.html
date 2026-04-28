@@ -321,6 +321,7 @@
 
       // Zero state
       document.getElementById('zeroPlaceholder').style.display = active ? 'none' : 'block';
+      document.getElementById('timeBreakdown').style.display = active ? 'flex' : 'none';
       document.getElementById('stickyTime').classList.toggle('visible', active);
       if (active) { showNavHintOnce(); unlockScroll(); }
       document.getElementById('submitBtn').classList.toggle('pointing-down', active);
