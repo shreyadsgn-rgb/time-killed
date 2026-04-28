@@ -42,11 +42,13 @@ body::before {
   top: 24px;
   right: 32px;
   z-index: 100;
-  display: none;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.3s ease, visibility 0.3s ease;
 }
-.sticky-time.visible { display: flex; }
+.sticky-time.visible { opacity: 1; visibility: visible; }
 .sticky-time:hover { transform: scale(1.06); }
 .sticky-time-shadow {
   position: absolute;
@@ -120,6 +122,30 @@ body::before {
   margin-top: 4px;
   position: relative;
   z-index: 2;
+}
+
+/* Input widget punch-in (triggered on DOMContentLoaded) */
+.input-widget-wrapper {
+  will-change: opacity, transform;
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+body.hero-loaded .input-widget-wrapper {
+  animation: inputPunchIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+}
+
+@keyframes inputPunchIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input-widget-wrapper {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 .hero-bottom {
@@ -239,12 +265,31 @@ body::before {
   margin-top: 8px;
 }
 
+/* Input hint — visible before first focus, fades out on focus */
+.input-hint {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  color: #888880;
+  text-align: center;
+  margin-top: 16px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.input-hint.hint-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* ─── COMPARISON SECTIONS ─── */
 .comparison-sections {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
 }
-.comparison-sections.visible {
-  display: block;
+.comparison-sections.gate-open {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* ─── SECTION WRAPPER (for daily/weekly/yearly) ─── */

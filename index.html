@@ -118,6 +118,11 @@
   </div>
 
   <script>
+    // Trigger hero intro animation once (not on scroll)
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('hero-loaded');
+    });
+
     // ─── DATA ───────────────────────────────────────────────────────────────
 
     const MAX_BAR = 387;
@@ -125,36 +130,30 @@
     const daily = [
       { v:'left',  dur:15,   task:'Trash & dishes',
         title:'Taken out the trash AND Done the dishes',
-        body:'Average time for both: 15 minutes. A complete act of domestic heroism you chose not to perform.' },
-      { v:'right', dur:75,   task:"Sabrina's set",
-        title:"Watched Sabrina Carpenter's full Coachella set",
-        body:'Runtime: 75 minutes. She was right there.' },
+        body:'Average time for both: 15 minutes. Your place could be smelling better.' },
+      { v:'right', dur:90,   task:"Justin's set",
+        title:"Watched Justin Bieber's full Coachella set",
+        body:'Runtime: 90 minutes. He was right there.' },
       { v:'left',  dur:97,   task:'Mean Girls runtime',
         title:'Rewatched Mean Girls (and made "so fetch" a thing)',
-        body:'Runtime: 97 minutes. You could have single-handedly changed the cultural lexicon.' },
+        body:'Runtime: 97 minutes. You could have become so much more cultured.' },
       { v:'right', dur:2,    task:'That one text',
         title:'Replied to that one text',
-        body:'Average reply time: 2 minutes. You know which one. They are still waiting.' },
+        body:'Average reply time: 2 minutes. You know which one.' },
       { v:'left',  dur:20,   task:'Calling mom',
         title:'Called your mom',
         body:'Average call: 20 minutes. She saw you being active on your socials though.' },
       { v:'right', dur:35,   task:'Casual 5K run',
-        title:'Run a 5k',
-        body:'Avg casual 5k: 35 minutes. Your dog would have loved it.' },
+        title:'Ran a 5k',
+        body:'Avg casual 5k: 35 minutes. Your health would have loved it.' },
       { v:'left',  dur:90,   task:'DIY hair dye',
         title:'Dyed your hair',
-        body:'Full DIY dye job: 90 minutes. Still the same hair.' },
-      { v:'right', dur:15,   task:'Goal planning',
-        title:"Rewritten your New Year's goals",
-        body:"15 minutes per planning session. Fresh start, same results." },
-      { v:'left',  dur:20,   task:'Dog walk',
-        title:'Walked your dog',
-        body:'Average walk: 20 minutes. Your dog noticed.' },
+        body:'Full DIY dye job: 90 minutes. Looks like you are not ready to reinvent yourself though.' },
       { v:'right', dur:47,   task:'Baking cookies',
         title:'Baked chocolate chip cookies from scratch',
-        body:"Prep + bake = 47 minutes. Your kitchen is still clean." },
+        body:"Prep + bake = 47 minutes. At least your kitchen is still clean." },
       { v:'left',  dur:4,    task:'LinkedIn Easy Apply',
-        title:'Applied to jobs on LinkedIn',
+        title:'Easy Applied to jobs on LinkedIn',
         body:"Easy Apply takes ~4 minutes. That's [n] rejections you haven't received yet." },
       { v:'right', dur:19,   task:'Netflix browsing',
         title:'Decided what to watch on Netflix',
@@ -298,9 +297,8 @@
 
       // Zero state
       document.getElementById('zeroPlaceholder').style.display = active ? 'none' : 'block';
-      document.getElementById('comparisonSections').classList.toggle('visible', active);
       document.getElementById('stickyTime').classList.toggle('visible', active);
-      if (active) showNavHintOnce();
+      if (active) { showNavHintOnce(); unlockScroll(); }
       document.getElementById('submitBtn').classList.toggle('pointing-down', active);
 
       if (!active) {
@@ -371,6 +369,19 @@
     // ─── EVENT LISTENERS ────────────────────────────────────────────────────
 
     let currentTotal = 0;
+    let hasRevealed = false;
+    let scrollUnlocked = false;
+
+    function blockScroll(e) { e.preventDefault(); }
+    document.addEventListener('wheel', blockScroll, { passive: false });
+    document.addEventListener('touchmove', blockScroll, { passive: false });
+
+    function unlockScroll() {
+      if (scrollUnlocked) return;
+      scrollUnlocked = true;
+      document.removeEventListener('wheel', blockScroll);
+      document.removeEventListener('touchmove', blockScroll);
+    }
 
     function readAndUpdate() {
       const h = Math.max(0, parseInt(document.getElementById('hoursInput').value)   || 0);
@@ -382,6 +393,18 @@
 
     document.getElementById('hoursInput').addEventListener('input', readAndUpdate);
     document.getElementById('minutesInput').addEventListener('input', readAndUpdate);
+
+    function revealBelowFold() {
+      if (hasRevealed) return;
+      hasRevealed = true;
+      document.getElementById('comparisonSections').classList.add('gate-open');
+      const hint = document.getElementById('inputHint');
+      if (hint) hint.classList.add('hint-hidden');
+    }
+
+    document.getElementById('hoursInput').addEventListener('focus', revealBelowFold);
+    document.getElementById('minutesInput').addEventListener('focus', revealBelowFold);
+
     document.getElementById('submitBtn').addEventListener('click', () => {
       readAndUpdate();
       if (currentTotal > 0) {
@@ -406,9 +429,13 @@
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         const el = entry.target;
-        const delay = parseInt(el.dataset.revealDelay, 10) || 0;
+        const delay =
+          parseInt(el.dataset.revealDelayNav, 10) ||
+          parseInt(el.dataset.revealDelay, 10) ||
+          0;
         setTimeout(() => {
           el.classList.add('revealed');
+          delete el.dataset.revealDelayNav;
           if (el.classList.contains('comparison-card')) {
             // Grow bars from 0 → stored target width via CSS transition
             const taskBar = el.querySelector('[data-bar="task"]');
@@ -454,7 +481,13 @@
       const cards = getAllCards();
       if (!cards.length) return;
       currentCardIndex = ((index % cards.length) + cards.length) % cards.length;
-      cards[currentCardIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const el = cards[currentCardIndex];
+      // Make keyboard navigation feel snappier by reducing the reveal delay
+      // for the next target that comes into view.
+      if (el.classList.contains('reveal') && !el.classList.contains('revealed')) {
+        el.dataset.revealDelayNav = '20';
+      }
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function showNavHint() {
@@ -483,7 +516,12 @@
       if (!cards.length) return;
 
       e.preventDefault();
-      jumpToCard(isNext ? currentCardIndex + 1 : currentCardIndex - 1);
+      if (isPrev && currentCardIndex <= 0) {
+        currentCardIndex = -1;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        jumpToCard(isNext ? currentCardIndex + 1 : currentCardIndex - 1);
+      }
       showNavHint();
     });
 
