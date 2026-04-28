@@ -333,8 +333,7 @@ body.hero-loaded .input-widget-wrapper {
 /* ─── CARD SIDE IMAGES ─── */
 .card-wrapper {
   position: relative;
-  width: 100vw;
-  margin-left: -64px; /* escape section-block's left padding so images bleed to viewport edges */
+  width: 100%;
   display: flex;
   justify-content: center;
 }
@@ -351,13 +350,14 @@ body.hero-loaded .input-widget-wrapper {
   user-select: none;
 }
 
+/* negative left/right escape section-block's 64px padding to reach the viewport edge */
 .card-img-left {
-  left: 0;
+  left: -52px;
   transform: translateX(-30%) translateY(-50%);
 }
 
 .card-img-right {
-  right: 0;
+  right: -52px;
   transform: translateX(30%) translateY(-50%);
 }
 
@@ -366,8 +366,10 @@ body.hero-loaded .input-widget-wrapper {
 }
 
 @media (max-width: 540px) {
-  .card-wrapper { margin-left: -32px; } /* section-block padding shrinks to 32px */
-  .card-side-img { width: 120px; }
+  /* section-block padding is 32px at this breakpoint */
+  .card-img-left  { left:  -20px; }
+  .card-img-right { right: -20px; }
+  .card-side-img  { width: 120px; }
 }
 
 /* ─── COMPARISON CARD ─── */
@@ -738,20 +740,24 @@ body.hero-loaded .input-widget-wrapper {
   .cards-container { gap: 84px; }
 
   /* Cards — stack vertically */
-  .comparison-card { width: 100%; padding: 0 32px; }
+  .comparison-card { width: 100%; }
   .card-top {
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 12px;
   }
-  .card-top.left  { flex-direction: column-reverse; }
-  .card-top.right { flex-direction: column; }
-  .card-text-block { width: 100%; }
-  .card-top.left  .badge-wrapper { width: 100%; justify-content: flex-start; padding: 0; }
-  .card-top.right .badge-wrapper { width: 100%; justify-content: flex-end;  padding: 0; }
-  .badge-box.rot-right { transform: rotate(3deg);  --badge-rot:  3deg; }
-  .badge-box.rot-left  { transform: rotate(-3deg); --badge-rot: -3deg; }
+  .card-top.left  { flex-direction: row; }
+  .card-top.right { flex-direction: row; }
+  .card-text-block {
+    width: auto;
+    flex: 1;
+    min-width: 0; /* prevent flex overflow that clips the badge */
+  }
+  .badge-wrapper { width: min(180px, 42vw); padding: 8px 0; }
+  /* Keep rotation direction consistent with desktop, just smaller magnitude */
+  .badge-box.rot-left  { --badge-rot:  3deg; }
+  .badge-box.rot-right { --badge-rot: -3deg; }
   .activity-title { font-size: 22px; line-height: 28px; }
   .activity-body { font-size: 14px; }
   .badge-num { font-size: 48px; }
@@ -779,9 +785,10 @@ body.hero-loaded .input-widget-wrapper {
   /* Closer — switch absolute-positioned elements to flow layout */
   .section-closer {
     height: auto;
-    padding: 72px 32px 80px;
+    padding: 140px 32px 140px;
     display: flex;
     flex-direction: column;
+    overflow: visible; /* base style has overflow:hidden which clips the in-flow bar */
   }
   .closer-t1 {
     position: relative;
@@ -820,6 +827,46 @@ body.hero-loaded .input-widget-wrapper {
     font-size: 30px;
     white-space: normal;
     text-align: right;
+  }
+}
+
+/* ─── FOOTER ─── */
+.site-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 60px;
+  border-top: 1px solid var(--gray-light);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  color: var(--gray-mid);
+  text-align: center;
+}
+
+.footer-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-icon-link {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  color: var(--gray-mid);
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.footer-icon-link:hover { opacity: 1; }
+
+@media (max-width: 540px) {
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px;
+    text-align: center;
   }
 }
 
