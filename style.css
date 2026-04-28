@@ -333,7 +333,8 @@ body.hero-loaded .input-widget-wrapper {
 /* ─── CARD SIDE IMAGES ─── */
 .card-wrapper {
   position: relative;
-  width: 100%;
+  width: 100vw;
+  margin-left: -64px; /* escape section-block's left padding so images bleed to viewport edges */
   display: flex;
   justify-content: center;
 }
@@ -361,7 +362,12 @@ body.hero-loaded .input-widget-wrapper {
 }
 
 @media (max-width: 900px) {
-  .card-side-img { display: none; }
+  .card-side-img { width: 180px; }
+}
+
+@media (max-width: 540px) {
+  .card-wrapper { margin-left: -32px; } /* section-block padding shrinks to 32px */
+  .card-side-img { width: 120px; }
 }
 
 /* ─── COMPARISON CARD ─── */
@@ -693,7 +699,7 @@ body.hero-loaded .input-widget-wrapper {
 @media (max-width: 540px) {
   /* Hero */
   .hero {
-    padding: 48px 24px 64px;
+    padding: 48px 32px 64px;
     min-height: auto;
   }
   .hero-spiral {
@@ -721,7 +727,7 @@ body.hero-loaded .input-widget-wrapper {
   .sticky-time-inner span, .sticky-colon { font-size: 20px; }
 
   /* Section blocks */
-  .section-block { padding: 48px 24px 64px; }
+  .section-block { padding: 48px 32px 64px; }
   .section-heading {
     font-size: 30px;
     line-height: 36px;
@@ -732,7 +738,7 @@ body.hero-loaded .input-widget-wrapper {
   .cards-container { gap: 84px; }
 
   /* Cards — stack vertically */
-  .comparison-card { width: 100%; }
+  .comparison-card { width: 100%; padding: 0 32px; }
   .card-top {
     width: 100%;
     flex-direction: column;
@@ -756,7 +762,7 @@ body.hero-loaded .input-widget-wrapper {
   .bar-label { width: 90px; font-size: 12px; }
 
   /* Finally */
-  .section-finally { padding: 60px 24px 80px; transform: rotate(1deg); }
+  .section-finally { padding: 60px 32px 80px; transform: rotate(1deg); }
   .finally-heading {
     font-size: 52px;
     line-height: 56px;
@@ -773,7 +779,7 @@ body.hero-loaded .input-widget-wrapper {
   /* Closer — switch absolute-positioned elements to flow layout */
   .section-closer {
     height: auto;
-    padding: 72px 24px 80px;
+    padding: 72px 32px 80px;
     display: flex;
     flex-direction: column;
   }
@@ -803,6 +809,9 @@ body.hero-loaded .input-widget-wrapper {
     width: 100%;
     margin-bottom: 24px;
   }
+  /* Override the desktop reveal transforms — bar is now in flow, not translateX(-50%) centered */
+  .closer-bar.reveal   { transform: translateY(24px); }
+  .closer-bar.revealed { transform: translateY(0); }
   .closer-bar-text { font-size: 26px; letter-spacing: -0.5px; }
   .closer-today {
     position: relative;
