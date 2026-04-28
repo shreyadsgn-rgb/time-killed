@@ -25,10 +25,13 @@
        HERO
   ═══════════════════════════════════════ -->
   <section class="hero">
-    <img class="hero-spiral" src="images/spiral-hero.png" alt="" draggable="false">
+    <img class="hero-spiral" src="images/melting-clock.png" alt="" draggable="false">
 
     <h2 class="hero-eyebrow">Oh, The Things You Could Be Doing</h2>
-    <h1 class="hero-title">INSTEAD!</h1>
+    <div class="hero-title-row" aria-label="Instead title">
+      <h1 class="hero-title">INSTEAD!</h1>
+      <img class="hero-balloon" src="images/hot-air-balloon.png" alt="" draggable="false">
+    </div>
 
     <div class="hero-bottom">
       <!-- Input column -->
@@ -381,10 +384,31 @@
         if (card.classList.contains('revealed')) {
           const taskBar = card.querySelector('[data-bar="task"]');
           const timeBar = card.querySelector('[data-bar="time"]');
-          if (taskBar) taskBar.style.width = bw.task + 'px';
-          if (timeBar) timeBar.style.width = bw.time + 'px';
+          if (taskBar) applyClampedBarWidth(taskBar, bw.task);
+          if (timeBar) applyClampedBarWidth(timeBar, bw.time);
         }
       });
+    }
+
+    function applyClampedBarWidth(barEl, targetPx) {
+      const row = barEl.closest('.bar-row');
+      if (!row) {
+        barEl.style.width = targetPx + 'px';
+        return;
+      }
+
+      const label = row.querySelector('.bar-label');
+      const styles = window.getComputedStyle(row);
+      const padL = parseFloat(styles.paddingLeft) || 0;
+      const padR = parseFloat(styles.paddingRight) || 0;
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+
+      const innerWidth = row.clientWidth - padL - padR;
+      const labelWidth = label ? label.offsetWidth : 0;
+      const available = Math.max(0, innerWidth - labelWidth - gap);
+      const clamped = Math.max(0, Math.min(targetPx, available));
+
+      barEl.style.width = clamped + 'px';
     }
 
     // ─── EVENT LISTENERS ────────────────────────────────────────────────────
@@ -461,8 +485,8 @@
             // Grow bars from 0 → stored target width via CSS transition
             const taskBar = el.querySelector('[data-bar="task"]');
             const timeBar = el.querySelector('[data-bar="time"]');
-            if (taskBar && el.dataset.barTask !== undefined) taskBar.style.width = el.dataset.barTask + 'px';
-            if (timeBar && el.dataset.barTime !== undefined) timeBar.style.width = el.dataset.barTime + 'px';
+            if (taskBar && el.dataset.barTask !== undefined) applyClampedBarWidth(taskBar, parseInt(el.dataset.barTask, 10) || 0);
+            if (timeBar && el.dataset.barTime !== undefined) applyClampedBarWidth(timeBar, parseInt(el.dataset.barTime, 10) || 0);
             const badge = el.querySelector('.badge-box');
             if (badge) badge.classList.add('stamped');
           }

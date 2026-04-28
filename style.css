@@ -31,7 +31,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   z-index: 999;
-  opacity: 0.045;
+  opacity: 0.25;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
   background-size: 256px 256px;
 }
@@ -99,6 +99,47 @@ body::before {
   pointer-events: none;
 }
 
+.hero-title-row {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 18px;
+  margin-top: 4px;
+}
+
+.hero-title-row .hero-title {
+  grid-column: 2;
+  margin-top: 0;
+}
+
+.hero-balloon {
+  grid-column: 3;
+  justify-self: start;
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Slow left-right sway for hero art */
+.hero-spiral,
+.hero-balloon {
+  will-change: transform;
+  animation: heroSwayX 7.5s ease-in-out infinite alternate;
+}
+
+.hero-balloon {
+  animation-duration: 6.5s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes heroSwayX {
+  from { transform: translateX(-8px); }
+  to   { transform: translateX(8px); }
+}
+
 .hero-eyebrow {
   font-family: 'Instrument Serif', serif;
   font-size: 48px;
@@ -143,6 +184,12 @@ body.hero-loaded .input-widget-wrapper {
   .input-widget-wrapper {
     animation: none !important;
     opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-spiral,
+  .hero-balloon {
+    animation: none !important;
     transform: none !important;
   }
 }
@@ -685,6 +732,7 @@ body.hero-loaded .input-widget-wrapper {
   .hero-eyebrow { font-size: 32px; }
   .hero-bottom { gap: 24px; }
   .hero-spiral { width: 280px; height: 280px; }
+  .hero-balloon { width: 88px; }
   .section-heading { font-size: 48px; line-height: 54px; }
   .comparison-card, .bar-card { width: 90vw; max-width: 654px; }
   .bar-card { width: 90vw; max-width: 654px; }
@@ -713,6 +761,8 @@ body.hero-loaded .input-widget-wrapper {
   }
   .hero-eyebrow { font-size: 22px; }
   .hero-title { font-size: 58px; letter-spacing: 1.2px; }
+  .hero-title-row { gap: 12px; }
+  .hero-balloon { width: 64px; }
   .hero-bottom { margin-top: 32px; gap: 20px; }
 
   /* Input widget */
