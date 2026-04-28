@@ -342,25 +342,29 @@
         const item = items[i];
         if (!item) return;
         const count = (totalMins * multiplier) / item.dur;
-        const fmtCount = fmt(count);
 
         // Badge number
         const numEl = card.querySelector('[data-num]');
-        if (numEl) numEl.textContent = fmtCount;
+        if (numEl) numEl.textContent = fmt(count);
 
-        // Body text [n] replacement
+        // Body text
         const bodyEl = card.querySelector('[data-body]');
         if (bodyEl) {
           const template = decodeURIComponent(bodyEl.getAttribute('data-body'));
           bodyEl.textContent = bodyText(template, count);
         }
 
-        // Bar widths
+        // Store target bar widths for the observer to read on first reveal;
+        // if card is already visible, update bars directly so CSS transition plays
         const bw = barWidths(totalMins * multiplier, item.dur);
-        const taskBar = card.querySelector('[data-bar="task"]');
-        const timeBar = card.querySelector('[data-bar="time"]');
-        if (taskBar) taskBar.style.width = bw.task + 'px';
-        if (timeBar) timeBar.style.width = bw.time + 'px';
+        card.dataset.barTask = bw.task;
+        card.dataset.barTime = bw.time;
+        if (card.classList.contains('revealed')) {
+          const taskBar = card.querySelector('[data-bar="task"]');
+          const timeBar = card.querySelector('[data-bar="time"]');
+          if (taskBar) taskBar.style.width = bw.task + 'px';
+          if (timeBar) timeBar.style.width = bw.time + 'px';
+        }
       });
     }
 
@@ -401,11 +405,23 @@
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
-        const delay = parseInt(entry.target.dataset.revealDelay, 10) || 0;
-        setTimeout(() => entry.target.classList.add('revealed'), delay);
-        revealObserver.unobserve(entry.target);
+        const el = entry.target;
+        const delay = parseInt(el.dataset.revealDelay, 10) || 0;
+        setTimeout(() => {
+          el.classList.add('revealed');
+          if (el.classList.contains('comparison-card')) {
+            // Grow bars from 0 → stored target width via CSS transition
+            const taskBar = el.querySelector('[data-bar="task"]');
+            const timeBar = el.querySelector('[data-bar="time"]');
+            if (taskBar && el.dataset.barTask !== undefined) taskBar.style.width = el.dataset.barTask + 'px';
+            if (timeBar && el.dataset.barTime !== undefined) timeBar.style.width = el.dataset.barTime + 'px';
+            const badge = el.querySelector('.badge-box');
+            if (badge) badge.classList.add('stamped');
+          }
+        }, delay);
+        revealObserver.unobserve(el);
       });
-    }, { threshold: 0.1 });
+    }, { rootMargin: '-30% 0px -30% 0px', threshold: 0 });
 
     function observeReveal(el, delay) {
       el.classList.add('reveal');

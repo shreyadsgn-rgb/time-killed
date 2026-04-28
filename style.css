@@ -350,9 +350,11 @@ body::before {
   padding: 12px 16px;
   text-align: center;
   min-width: 140px;
+  --badge-rot: 0deg;
+  transform: rotate(var(--badge-rot)) scale(0);
 }
-.badge-box.rot-left  { transform: rotate(6deg); }
-.badge-box.rot-right { transform: rotate(-6deg); }
+.badge-box.rot-left  { --badge-rot:  6deg; }
+.badge-box.rot-right { --badge-rot: -6deg; }
 
 .badge-num {
   font-family: 'Instrument Serif', serif;
@@ -370,6 +372,18 @@ body::before {
   letter-spacing: -1.28px;
   line-height: 1;
   display: inline;
+}
+
+/* ─── BADGE STAMP ANIMATION ─── */
+@keyframes badge-stamp {
+  0%   { transform: rotate(var(--badge-rot)) scale(0);    }
+  50%  { transform: rotate(var(--badge-rot)) scale(1.1);  }
+  70%  { transform: rotate(var(--badge-rot)) scale(0.9);  }
+  85%  { transform: rotate(var(--badge-rot)) scale(1.03); }
+  100% { transform: rotate(var(--badge-rot)) scale(1);    }
+}
+.badge-box.stamped {
+  animation: badge-stamp 0.5s ease-out forwards;
 }
 
 /* ─── BAR CHART CARD ─── */
@@ -414,7 +428,7 @@ body::before {
 .bar {
   height: 20px;
   border: 1px solid var(--black);
-  transition: width 0.5s ease;
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   flex-shrink: 0;
 }
 .bar.task { background: var(--bar-task); }
@@ -659,8 +673,8 @@ body::before {
   .card-text-block { width: 100%; }
   .card-top.left  .badge-wrapper { width: 100%; justify-content: flex-start; padding: 0; }
   .card-top.right .badge-wrapper { width: 100%; justify-content: flex-end;  padding: 0; }
-  .badge-box.rot-right { transform: rotate(3deg); }   /* left-side badges tilt right */
-  .badge-box.rot-left  { transform: rotate(-3deg); }  /* right-side badges tilt left */
+  .badge-box.rot-right { transform: rotate(3deg);  --badge-rot:  3deg; }
+  .badge-box.rot-left  { transform: rotate(-3deg); --badge-rot: -3deg; }
   .activity-title { font-size: 22px; line-height: 28px; }
   .activity-body { font-size: 14px; }
   .badge-num { font-size: 48px; }
