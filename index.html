@@ -128,70 +128,70 @@
     const MAX_BAR = 387;
 
     const daily = [
-      { v:'left',  dur:15,   task:'Trash & dishes',
+      { v:'left',  dur:15,   task:'Trash & dishes',     img:'trash-dishes.png',
         title:'Taken out the trash AND Done the dishes',
         body:'Average time for both: 15 minutes. Your place could be smelling better.' },
-      { v:'right', dur:90,   task:"Justin's set",
+      { v:'right', dur:90,   task:"Justin's set",        img:'justin-bieber.png',
         title:"Watched Justin Bieber's full Coachella set",
         body:'Runtime: 90 minutes. He was right there.' },
-      { v:'left',  dur:97,   task:'Mean Girls runtime',
+      { v:'left',  dur:97,   task:'Mean Girls runtime',  img:'mean-girls.png',
         title:'Rewatched Mean Girls (and made "so fetch" a thing)',
         body:'Runtime: 97 minutes. You could have become so much more cultured.' },
-      { v:'right', dur:2,    task:'That one text',
+      { v:'right', dur:2,    task:'That one text',       img:'replied-text.png',
         title:'Replied to that one text',
         body:'Average reply time: 2 minutes. You know which one.' },
-      { v:'left',  dur:20,   task:'Calling mom',
+      { v:'left',  dur:20,   task:'Calling mom',         img:'called-mom.png',
         title:'Called your mom',
         body:'Average call: 20 minutes. She saw you being active on your socials though.' },
-      { v:'right', dur:35,   task:'Casual 5K run',
+      { v:'right', dur:35,   task:'Casual 5K run',       img:'run-5k.png',
         title:'Ran a 5k',
         body:'Avg casual 5k: 35 minutes. Your health would have loved it.' },
-      { v:'left',  dur:90,   task:'DIY hair dye',
+      { v:'left',  dur:90,   task:'DIY hair dye',        img:'dyed-hair.png',
         title:'Dyed your hair',
         body:'Full DIY dye job: 90 minutes. Looks like you are not ready to reinvent yourself though.' },
-      { v:'right', dur:47,   task:'Baking cookies',
+      { v:'right', dur:47,   task:'Baking cookies',      img:'baked-cookies.png',
         title:'Baked chocolate chip cookies from scratch',
         body:"Prep + bake = 47 minutes. At least your kitchen is still clean." },
-      { v:'left',  dur:4,    task:'LinkedIn Easy Apply',
+      { v:'left',  dur:4,    task:'LinkedIn Easy Apply', img:'linkedin.png',
         title:'Easy Applied to jobs on LinkedIn',
         body:"Easy Apply takes ~4 minutes. That's [n] rejections you haven't received yet." },
-      { v:'right', dur:19,   task:'Netflix browsing',
+      { v:'right', dur:19,   task:'Netflix browsing',    img:'netflix.png',
         title:'Decided what to watch on Netflix',
         body:"Average browse time: 18–20 minutes. [n] full cycles of \"I don't know, you pick.\"" },
     ];
 
     const weekly = [
-      { v:'left',  dur:300, task:'Picking a Lock',
+      { v:'left',  dur:300,  task:'Picking a Lock',      img:'lock-picking.png',
         title:'Learned to pick a lock',
         body:'Average time: ~5 hours. No questions asked.' },
-      { v:'right', dur:720,  task:'Crochet blanket',
+      { v:'right', dur:720,  task:'Crochet blanket',     img:'crochet-blanket.png',
         title:'Finished a beginner crochet blanket',
         body:'Average completion time: 12 hours. You had time for one full blanket or the start of a scarf you\'d never finish anyway.' },
-      { v:'left',  dur:480,  task:'Short story draft',
+      { v:'left',  dur:480,  task:'Short story draft',   img:'short-story.png',
         title:'Written a short story',
         body:'Average first draft: ~8 hours. You had time for [n].' },
-      { v:'right', dur:270,  task:'The Bear S1',
+      { v:'right', dur:270,  task:'The Bear S1',         img:'the-bear.png',
         title:'Watched every episode of The Bear S1',
         body:'Runtime of The Bear S1: ~4.5 hours.' },
-      { v:'left',  dur:360,  task:"Homemade Pasta",
+      { v:'left',  dur:360,  task:"Homemade Pasta",      img:'pasta.png',
         title:"Learned to make fresh pasta from scratch",
         body:'Required hours: ~6 hours. No guarantees on the outcome though.' },
-      { v:'right', dur:180,  task:'TikTok dance',
+      { v:'right', dur:180,  task:'TikTok dance',        img:'tiktok-dance.png',
         title:'Learned a TikTok dance. All the way through.',
         body:'Estimated learning time: ~3 hours. [n] dances you could\'ve posted.' },
     ];
 
     const yearly = [
-      { v:'left',  dur:12000, task:'Yoga certification',
+      { v:'left',  dur:12000, task:'Yoga certification',      img:'yoga.png',
         title:'Become a certified yoga instructor',
         body:'Certification requirement: 200 hours. You could be certified, teaching, and already spiritually exhausted by your students.' },
-      { v:'right', dur:2400,  task:"Obama's reading list",
+      { v:'right', dur:2400,  task:"Obama's reading list",    img:'obamas-reading-list.png',
         title:"Read every book on Obama's reading list",
         body:'Estimated reading time: ~40 hours for the full list.' },
-      { v:'left',  dur:9000,  task:'Conversational Spanish',
+      { v:'left',  dur:9000,  task:'Conversational Spanish',  img:'spanish.png',
         title:'Learned conversational Spanish',
         body:'FSI research: ~150 hours to conversational fluency.' },
-      { v:'right', dur:12000, task:'Camino de Santiago',
+      { v:'right', dur:12000, task:'Camino de Santiago',      img:'mount-fuji.png',
         title:'Walked the entire Camino de Santiago',
         body:'The full pilgrimage: ~200 hours of walking.' },
     ];
@@ -265,12 +265,20 @@
              <span class="bar-label">${screenTime}</span>
            </div>`;
 
+      const imgSide = isLeft ? 'left' : 'right';
+      const imgHtml = item.img
+        ? `<img class="card-side-img card-img-${imgSide}" src="images/${item.img}" alt="" draggable="false">`
+        : '';
+
       return `
-        <div class="comparison-card reveal" data-dur="${item.dur}">
-          <div class="card-top ${topClass}">
-            ${isLeft ? textHtml + badgeHtml : badgeHtml + textHtml}
+        <div class="card-wrapper">
+          ${imgHtml}
+          <div class="comparison-card reveal" data-dur="${item.dur}">
+            <div class="card-top ${topClass}">
+              ${isLeft ? textHtml + badgeHtml : badgeHtml + textHtml}
+            </div>
+            <div class="bar-card">${barRows}</div>
           </div>
-          <div class="bar-card">${barRows}</div>
         </div>`;
     }
 
@@ -586,11 +594,24 @@
       document.body.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
     }
 
+    function updateParallax() {
+      document.querySelectorAll('.card-side-img').forEach(img => {
+        const wrapper = img.closest('.card-wrapper');
+        if (!wrapper) return;
+        const card = wrapper.querySelector('.comparison-card');
+        if (!card) return;
+        const offset = card.getBoundingClientRect().top - window.innerHeight / 2;
+        const tx = img.classList.contains('card-img-left') ? '-30%' : '30%';
+        img.style.transform = `translateX(${tx}) translateY(calc(-50% + ${offset * 0.8}px))`;
+      });
+    }
+
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           updateBackgroundColor();
+          updateParallax();
           ticking = false;
         });
         ticking = true;
@@ -598,6 +619,7 @@
     });
 
     updateBackgroundColor();
+    updateParallax();
   </script>
 </body>
 </html>
