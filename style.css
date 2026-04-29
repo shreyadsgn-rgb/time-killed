@@ -747,9 +747,9 @@ body.hero-loaded .input-widget-wrapper {
 
 /* ─── MOBILE ─── */
 @media (max-width: 540px) {
-  /* Hero */
+  /* Hero — extra top breathing room; more space before comparison sections */
   .hero {
-    padding: 48px 32px 64px;
+    padding: 96px 32px 88px;
     min-height: auto;
   }
   .hero-spiral {
@@ -778,8 +778,13 @@ body.hero-loaded .input-widget-wrapper {
   .sticky-time-inner { padding: 8px 12px; gap: 6px; }
   .sticky-time-inner span, .sticky-colon { font-size: 20px; }
 
-  /* Section blocks */
-  .section-block { padding: 48px 32px 64px; }
+  /* Section blocks — more vertical rhythm between daily / weekly / yearly */
+  .section-block { padding: 72px 32px 88px; }
+
+  /* Space between yearly block and “And FINALLY” */
+  .section-finally-outer {
+    margin-top: 32px;
+  }
   .section-heading {
     font-size: 30px;
     line-height: 36px;
@@ -818,7 +823,7 @@ body.hero-loaded .input-widget-wrapper {
   .bar-label { width: 90px; font-size: 12px; }
 
   /* Finally */
-  .section-finally { padding: 60px 32px 80px; transform: rotate(1deg); }
+  .section-finally { padding: 88px 32px 96px; transform: rotate(1deg); }
   .finally-heading {
     font-size: 52px;
     line-height: 56px;
@@ -835,7 +840,7 @@ body.hero-loaded .input-widget-wrapper {
   /* Closer — switch absolute-positioned elements to flow layout */
   .section-closer {
     height: auto;
-    padding: 140px 32px 140px;
+    padding: 168px 32px 168px;
     display: flex;
     flex-direction: column;
     overflow: visible; /* base style has overflow:hidden which clips the in-flow bar */
